@@ -18,7 +18,7 @@ npm install
 
 ## Usage
 
-First, you need to set the below environment variables in the `.env. tempalates` file or your deployment platforms.
+First, you need to set the below environment variables in the `.env.examples` file or your deployment platforms.
 
 - `MAYAR_HEADLESS_API_URL`
 - `MAYAR_AUTH_TOKEN`
