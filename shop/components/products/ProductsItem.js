@@ -1,7 +1,6 @@
-import Card from "../ui/Card";
 import classes from "./ProductItem.module.css";
 import { useRouter } from "next/router";
-// import React, { useState, useRef } from "react";
+
 
 function ProductItem(props) {
   const router = useRouter();
@@ -16,8 +15,6 @@ function ProductItem(props) {
     router.push(props.url);
   };
 
-  // const [show, setShow] = useState(false);
-
   return (
     <>
       <div className={classes.image}>
@@ -31,9 +28,9 @@ function ProductItem(props) {
         />
       </div>
       <div className={classes.content}>
-        <h3>{props.name}</h3>
-        <h4>Rp. {props.amount}</h4>
-        {props.status && <p className=".active">{props.status}</p>}
+        <h3>Produk : &nbsp;&nbsp;{props.name}</h3>
+        <h3>Harga : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rp. {props.amount}</h3>
+        {props.status && <h3 className=".active">Status : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{props.status}</h3>}
       </div>
       <div className={classes.actions}>
         <button onClick={checkoutHandler}>Langsung Checkout</button>

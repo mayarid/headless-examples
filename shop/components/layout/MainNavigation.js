@@ -11,9 +11,6 @@ function MainNavigation() {
           <li>
             <Link href='/'>Produk</Link>
           </li>
-          {/* <li>
-            <Link href='error' >Keranjang</Link>
-          </li> */}
         </ul>
       </nav>
     </header>
