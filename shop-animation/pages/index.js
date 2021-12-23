@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { GET_PAYMENT_LINK_PAGE_DEV } from "../graphql/queries";
+import Link from 'next/link'
 
 const content = (isFirstMount) => ({
   animate: {
@@ -65,6 +66,7 @@ export default function IndexPage({ isFirstMount, link }) {
 
 const Product = ({ coverImage, type, name, amount }) => (
   <div className="w-full p-4 lg:w-1/4 md:w-1/2">
+    <Link href="/detail/xxxxxxx">
     <a className="relative block h-48 overflow-hidden rounded">
       {coverImage !== null ? (
         <img
@@ -88,6 +90,7 @@ const Product = ({ coverImage, type, name, amount }) => (
       <h2 className="text-lg font-medium text-gray-900 title-font">{name} </h2>
       <p className="mt-1">Rp{amount.toFixed(2)}</p>
     </div>
+    </Link>
   </div>
 );
 
