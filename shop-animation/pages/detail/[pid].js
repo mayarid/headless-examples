@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
-import Link from 'next/link'
+import Link from "next/link";
+import {useRouter} from 'next/router';
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { GET_PAYMENT_LINK_PAGE_DEV } from "../../graphql/queries";
 
 const content = {
   animate: {
@@ -31,8 +34,18 @@ const inputs = {
   },
 };
 
-const DetailPage = ({ link }) => {
-  console.log("PID PROD", link)
+const DetailPage = ({link}) => {
+  
+  const router = useRouter()
+  const imageNull = 'https://demo-only.mayar.link/digital-product-placeholder.png'
+
+  const item = link[0]
+
+  //checkoutHandler
+  const checkOutHandler = () => {
+    router.push(item.invoiceUrl)
+  }
+  
   return (
     <motion.section
       exit={{ opacity: 0 }}
@@ -53,28 +66,37 @@ const DetailPage = ({ link }) => {
               <img
                 alt="ecommerce"
                 className="block object-cover object-center w-full h-full"
-                src="https://demo-only.mayar.link/digital-product-placeholder.png"
+                src={item.coverImage !== null?item.coverImage['url']:imageNull}
               />
             </div>
             <div className="w-1/2 p-2">
               <div>
                 <small>
                   <Link href="/">
-                    <button className="bg-white-500 hover:bg-white-700 text-black rounded">&larr; Kembali</button>
+                    <button className="bg-white-500 hover:bg-white-700 text-black rounded">
+                      &larr; Kembali
+                    </button>
                   </Link>
                 </small>
               </div>
-              <div className="mt-5"><small className="mb-1 text-xs tracking-widest text-gray-500 title-font">KATEGORI</small></div>
+              <div className="mt-5">
+                <small className="mb-1 text-xs tracking-widest text-gray-500 title-font">
+                  {item.type}
+                </small>
+              </div>
               <div>
-                <h2 className="text-lg font-medium text-gray-900 title-font">NAMA PRODUK</h2>
-                <h4 className="mt-1">Rp 1.200.000</h4>
+                <h2 className="text-lg font-medium text-gray-900 title-font">
+                  {item.name}
+                </h2>
+                <h4 className="mt-1">Rp {item.amount}</h4>
                 <p className="mt-4">
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                 {item.description}
                 </p>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Beli Sekarang</button>
+                <button onClick={checkOutHandler} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                  Beli Sekarang
+                </button>
               </div>
             </div>
-
           </div>
         </motion.div>
       </motion.div>
@@ -83,3 +105,53 @@ const DetailPage = ({ link }) => {
 };
 
 export default DetailPage;
+
+export async function getStaticPaths() {
+  const client = new ApolloClient({
+    uri: process.env.MAYAR_HEADLESS_API_URL,
+    headers: {
+      Authorization: process.env.MAYAR_AUTH_TOKEN,
+    },
+    cache: new InMemoryCache(),
+  });
+  const { data } = await client.query({
+    query: GET_PAYMENT_LINK_PAGE_DEV,
+  });
+
+  const paths = data?.getPaymentLinkPageDev?.items?.map((items) => (
+    {
+      params: { pid: items.id.toString()}
+    })
+  );
+
+  return {
+    paths,
+    fallback: false,
+  };
+}
+
+
+
+export async function getStaticProps(ctx) {
+
+  const id = ctx.params.pid
+  const client = new ApolloClient({
+    uri: process.env.MAYAR_HEADLESS_API_URL,
+    headers: {
+      Authorization: process.env.MAYAR_AUTH_TOKEN,
+    },
+    cache: new InMemoryCache(),
+  });
+  const { data } = await client.query({
+    query: GET_PAYMENT_LINK_PAGE_DEV,
+  });
+
+  const prod = data?.getPaymentLinkPageDev?.items
+  const selectedItems = prod?.filter(prod=>prod.id===id)
+
+  return {
+    props: {
+      link:selectedItems
+    },
+  };
+}
